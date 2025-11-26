@@ -7,13 +7,14 @@ FROM base AS deps
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
-# Install dependencies based on the preferred package manager
-COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* ./
+# Install dependencies (force npm to avoid interactive yarn/pnpm stalls)
+# This also disables audit/fund to prevent network/prompt delays in CI/builds.
+COPY package.json package-lock.json* ./
 RUN \
-  if [ -f yarn.lock ]; then yarn --frozen-lockfile; \
-  elif [ -f package-lock.json ]; then npm ci; \
-  elif [ -f pnpm-lock.yaml ]; then yarn global add pnpm && pnpm i --frozen-lockfile; \
-  else echo "Lockfile not found." && exit 1; \
+  if [ -f package-lock.json ]; then \
+    npm ci --no-audit --no-fund; \
+  else \
+    echo "package-lock.json not found. Generating one..." && npm install --package-lock-only && npm ci --no-audit --no-fund; \
   fi
 
 # Rebuild the source code only when needed
