@@ -6,7 +6,7 @@ import { ThemeToggle } from '@/components/theme/ThemeToggle';
 import { StorageStat } from '@/components/StorageStat';
 import { Separator } from '../ui/separator';
 import { Button } from '../ui/button';
-import { LuLogIn, LuLogOut } from 'react-icons/lu';
+import { LuLogIn, LuLogOut, LuRss } from 'react-icons/lu';
 
 export async function Header() {
   const [session, isRequiredAuth] = await Promise.all([getSession(), isRequiredAuthentication()]);
@@ -17,6 +17,11 @@ export async function Header() {
       <div className='flex-auto max-w-[--site-min-width] ml-auto text-right'>
         <StorageStat />
       </div>
+      <Button variant='ghost' size='icon' className='text-lg rounded-full' asChild>
+        <Link href='/podcast-settings'>
+          <LuRss />
+        </Link>
+      </Button>
       <ThemeToggle />
       {isRequiredAuth && (
         <>

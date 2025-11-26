@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "concurrently \"next dev\" \"ts-node --project tsconfig.server.json podcast-server.ts\"",
     "build": "next build",
-    "start": "next start",
+    "start": "concurrently \"cross-env NODE_ENV=production next start\" \"cross-env NODE_ENV=production ts-node --project tsconfig.server.json podcast-server.ts\"",
     "lint": "next lint"
   },
   "dependencies": {

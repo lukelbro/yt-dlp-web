@@ -88,6 +88,9 @@ export class YtDlpHelper {
       name: null,
       path: null
     },
+    useSponsorBlock: false,
+    convertFormat: false,
+    playlistDirPath: undefined,
     playlist: [],
     download: {
       pid: null,
@@ -124,6 +127,8 @@ export class YtDlpHelper {
     outputFilename?: string;
     selectQuality?: SelectQuality;
     enableForceKeyFramesAtCuts?: boolean;
+    useSponsorBlock?: boolean;
+    convertFormat?: boolean;
   }) {
     this.url = querys.url;
     this.pid = querys.pid;
@@ -142,6 +147,8 @@ export class YtDlpHelper {
     this.videoInfo.outputFilename = querys.outputFilename || '';
     this.videoInfo.selectQuality = querys.selectQuality || '';
     this.videoInfo.enableForceKeyFramesAtCuts = querys.enableForceKeyFramesAtCuts || false;
+    this.videoInfo.useSponsorBlock = querys.useSponsorBlock || false;
+    this.videoInfo.convertFormat = querys.convertFormat || false;
 
     if (querys.cutStartTime && cutsTimeRegex.test(querys.cutStartTime))
       this.videoInfo.cutStartTime = querys.cutStartTime;
@@ -208,6 +215,14 @@ export class YtDlpHelper {
       '-P',
       DOWNLOAD_PATH
     ];
+
+    if (this.videoInfo.useSponsorBlock) {
+      options.push('--sponsorblock-remove', 'all');
+    }
+
+    if (this.videoInfo.convertFormat) {
+      options.push('-f', 'bestaudio', '--extract-audio', '--audio-format', 'm4a');
+    }
 
     if (!this.videoInfo.cutVideo) {
       options.push('--print', 'after_move:filepath');

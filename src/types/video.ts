@@ -84,6 +84,8 @@ export interface VideoInfo {
   outputFilename: string;
   selectQuality: SelectQuality;
   enableForceKeyFramesAtCuts: boolean;
+  useSponsorBlock: boolean;
+  convertFormat: boolean;
   file: Streams & {
     path: string | null;
     name: string | null;

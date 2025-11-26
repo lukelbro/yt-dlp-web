@@ -31,6 +31,7 @@ ENV NEXT_TELEMETRY_DISABLED 1
 
 # If using npm comment out above and use below instead
 RUN npm run build
+RUN tsc --project tsconfig.server.json
 
 # Production image, copy all the files and run next
 FROM base AS runner
@@ -43,7 +44,7 @@ ENV NEXT_TELEMETRY_DISABLED 1
 RUN apk update && \
   apk add ffmpeg python3
 
-RUN wget https://github.com/yt-dlp/yt-dlp/releases/download/2025.05.22/yt-dlp -O /usr/local/bin/yt-dlp && \
+RUN wget https://github.com/yt-dlp/yt-dlp/releases/download/2023.12.30/yt-dlp -O /usr/local/bin/yt-dlp && \
   chmod a+rx /usr/local/bin/yt-dlp
 
 # Use environment variables in the addgroup and adduser commands
@@ -56,13 +57,19 @@ COPY --from=builder /app/public ./public
 # https://nextjs.org/docs/advanced-features/output-file-tracing
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+COPY --from=builder --chown=nextjs:nodejs /app/dist ./dist
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/package.json ./package.json
+
 
 USER nextjs
 
 EXPOSE 3000
+EXPOSE 3001
 
 ENV PORT 3000
+ENV PODCAST_PORT 3001
 # set hostname to localhost
 ENV HOSTNAME "0.0.0.0"
 
-CMD ["node", "server.js"]
+CMD ["concurrently", "node server.js", "node dist/podcast-server.js"]

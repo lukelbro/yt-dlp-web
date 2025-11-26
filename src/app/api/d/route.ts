@@ -8,6 +8,7 @@ import {
   checkRequiredFoldersAreAccessible,
   checkRequiredFoldersAreMounted
 } from '@/server/helpers/PermissionHelper';
+import { PodcastSettingsHelper } from '@/server/helpers/PodcastSettingsHelper';
 
 export const dynamic = 'force-dynamic';
 
@@ -29,6 +30,8 @@ export async function GET(request: Request) {
   const outputFilename = searchParams.get('outputFilename') || '';
   const selectQuality = (searchParams.get('selectQuality') || '') as SelectQuality;
   const enableForceKeyFramesAtCuts = searchParams.get('enableForceKeyFramesAtCuts') === 'true';
+
+  const podcastSettings = await PodcastSettingsHelper.get();
 
   // const url = context?.params?.url;
 
@@ -88,7 +91,9 @@ export async function GET(request: Request) {
       proxyAddress: typeof proxyAddress === 'string' ? proxyAddress : '',
       outputFilename,
       selectQuality: !videoId && !audioId ? selectQuality : '',
-      enableForceKeyFramesAtCuts
+      enableForceKeyFramesAtCuts,
+      useSponsorBlock: podcastSettings.useSponsorBlock,
+      convertFormat: podcastSettings.convertFormat,
     });
     const videoInfo = ytdlp.getVideoInfo();
 

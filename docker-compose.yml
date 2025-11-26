@@ -5,7 +5,8 @@ services:
     image: sooros5132/yt-dlp-web
     container_name: yt-dlp-web
     user: 1000:1000
-    # environment:
+    environment:
+      - PODCAST_PORT=3001
     #   If you need to protect the site, set AUTH_SECRET, CREDENTIAL_USERNAME, CREDENTIAL_PASSWORD.
     #   AUTH_SECRET: "Random_string,_40+_characters_recommended"
     #   CREDENTIAL_USERNAME: "username"
@@ -15,4 +16,5 @@ services:
       - ~/Desktop/cache:/cache
     ports:
       - 3000:3000
+      - 3001:3001
     restart: unless-stopped
